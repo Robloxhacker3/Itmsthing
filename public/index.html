@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iOS App Installer Link Generator</title>
+</head>
+<body>
+  <h2>iOS App Installer Link Generator</h2>
+  <form id="uploadForm" method="POST" enctype="multipart/form-data">
+    <label for="ipaFile">Upload IPA File:</label>
+    <input type="file" id="ipaFile" name="ipaFile" required><br><br>
+
+    <label for="p12File">Upload P12 File:</label>
+    <input type="file" id="p12File" name="p12File" required><br><br>
+
+    <label for="provisioningProfile">Upload Provisioning Profile:</label>
+    <input type="file" id="provisioningProfile" name="provisioningProfile" required><br><br>
+
+    <label for="p12Password">Enter P12 Password:</label>
+    <input type="password" id="p12Password" name="p12Password" required><br><br>
+
+    <button type="submit">Generate Link</button>
+  </form>
+
+  <div id="result" style="display:none;">
+    <h3>Generated Link</h3>
+    <a id="downloadLink" href="" target="_blank">Download Link</a>
+  </div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const formData = new FormData(this);
+
+      const response = await fetch('/generate-link', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.itmsLink) {
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('downloadLink').href = result.itmsLink;
+      } else {
+        alert('Error generating the link.');
+      }
+    });
+  </script>
+</body>
+</html>
